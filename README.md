@@ -21,7 +21,7 @@
 ```
     @Autowired WorkFlow registerWorkFlow;
 
-    AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("sercan", "celenk");}}));
+    AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("parameter1", "parameter1 value");}}));
     registerWorkflow.processWorkflow(context).subscribe();
 ```
 
