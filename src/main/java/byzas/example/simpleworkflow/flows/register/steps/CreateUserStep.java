@@ -3,6 +3,7 @@ package byzas.example.simpleworkflow.flows.register.steps;
 import byzas.example.simpleworkflow.core.context.AbstractContext;
 import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
 import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -19,11 +20,12 @@ public class CreateUserStep implements WorkflowStep {
     }
 
     @Override
-    public CompletableFuture<Boolean> doAction(AbstractContext context) {
+    public Mono<Boolean> doAction(AbstractContext context) {
         log.info("User created");
 
         context.setParametersAttribute("hande", "celenk");
         context.dumpContextParameters();
-        return CompletableFuture.completedFuture(true);
+        if(1==1) return Mono.error(new RuntimeException("Bilincli firlatildi"));
+        return Mono.just(true);
     }
 }

@@ -1,6 +1,7 @@
 package byzas.example.simpleworkflow.core.workflow;
 
 import byzas.example.simpleworkflow.core.context.AbstractContext;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
  * @project IntelliJ IDEA
  */
 public interface IWorkflow {
-    CompletableFuture<Boolean> processWorkflow(AbstractContext context);
+    Mono<Boolean> processWorkflow(AbstractContext context);
 }
 
 

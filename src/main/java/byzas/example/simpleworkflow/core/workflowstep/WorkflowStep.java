@@ -6,11 +6,13 @@ package byzas.example.simpleworkflow.core.workflowstep;
  */
 
 import byzas.example.simpleworkflow.core.context.AbstractContext;
+import lombok.extern.log4j.Log4j2;
+import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
 public interface WorkflowStep {
     String getName();
 
-    CompletableFuture<Boolean> doAction(AbstractContext context);
+    Mono<Boolean> doAction(AbstractContext context);
 }

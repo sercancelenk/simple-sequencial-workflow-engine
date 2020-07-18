@@ -25,6 +25,6 @@ public class SimpleWorkflowApplication implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("sercan", "celenk");}}));
-        registerWorkflow.processWorkflow(context);
+        registerWorkflow.processWorkflow(context).subscribe();
     }
 }
