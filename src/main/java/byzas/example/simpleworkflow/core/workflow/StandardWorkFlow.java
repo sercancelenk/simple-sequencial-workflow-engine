@@ -8,11 +8,9 @@ import java.util.List;
  * @author ext0280263 on 18.07.2020
  * @project IntelliJ IDEA
  */
-public class WorkFlow extends WorkflowImpl {
 
-
-    public WorkFlow(String workFlowName, List<WorkflowStep> actions) {
-        super(workFlowName, actions);
+public class StandardWorkFlow extends WorkflowImpl {
+    public StandardWorkFlow(String workFlowName, List<WorkflowStep> steps) {
+        super(workFlowName, steps);
     }
-
 }

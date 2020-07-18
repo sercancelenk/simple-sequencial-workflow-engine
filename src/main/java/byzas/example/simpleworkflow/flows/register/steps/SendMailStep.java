@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
  * @author ext0280263 on 18.07.2020
  * @project IntelliJ IDEA
  */
+
 @Log4j2
 public class SendMailStep extends WorkflowStep {
 
@@ -22,7 +23,7 @@ public class SendMailStep extends WorkflowStep {
     @Override
     public Mono<Boolean> doAction(AbstractContext context) {
         log.info("Mail sended");
-        log.info("Incoming parameter : hande : " + context.getParametersAttribute("hande"));
+        log.info("Incoming parameter : parameter1 : " + context.getParametersAttribute("parameter1"));
         context.setParametersAttribute("mail", "sended");
         context.dumpContextParameters();
         return Mono.just(true);

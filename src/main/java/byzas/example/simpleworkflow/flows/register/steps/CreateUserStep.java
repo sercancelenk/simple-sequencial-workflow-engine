@@ -23,9 +23,9 @@ public class CreateUserStep extends WorkflowStep {
     public Mono<Boolean> doAction(AbstractContext context) {
         log.info("User created");
 
-        context.setParametersAttribute("hande", "celenk");
+        context.setParametersAttribute("parameter1", "parameter valud");
         context.dumpContextParameters();
-        if(1==1) return Mono.error(new RuntimeException("Bilincli firlatildi"));
+        if(1==1) return Mono.error(new RuntimeException("Forced exception"));
         return Mono.just(true);
     }
 }

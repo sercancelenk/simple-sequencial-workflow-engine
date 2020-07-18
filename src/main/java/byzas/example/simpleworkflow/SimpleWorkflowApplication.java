@@ -2,7 +2,7 @@ package byzas.example.simpleworkflow;
 
 import byzas.example.simpleworkflow.core.context.AbstractContext;
 import byzas.example.simpleworkflow.core.context.ParameterContext;
-import byzas.example.simpleworkflow.core.workflow.WorkFlow;
+import byzas.example.simpleworkflow.core.workflow.StandardWorkFlow;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,11 +19,10 @@ public class SimpleWorkflowApplication implements CommandLineRunner {
         SpringApplication.run(SimpleWorkflowApplication.class, args);
     }
 
-    private final WorkFlow registerWorkflow;
+    private final StandardWorkFlow registerWorkflow;
 
     @Override
     public void run(String... args) throws Exception {
-
         AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("sercan", "celenk");}}));
         registerWorkflow.processWorkflow(context).subscribe();
     }

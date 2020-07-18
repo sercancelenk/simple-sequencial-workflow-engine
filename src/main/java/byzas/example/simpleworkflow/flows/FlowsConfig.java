@@ -1,7 +1,6 @@
 package byzas.example.simpleworkflow.flows;
 
-import byzas.example.simpleworkflow.core.workflow.IWorkflow;
-import byzas.example.simpleworkflow.core.workflow.WorkFlow;
+import byzas.example.simpleworkflow.core.workflow.StandardWorkFlow;
 import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
 import byzas.example.simpleworkflow.flows.register.steps.CreateUserStep;
 import byzas.example.simpleworkflow.flows.register.steps.SendMailStep;
@@ -18,10 +17,10 @@ import java.util.Arrays;
 @Configuration
 public class FlowsConfig {
     @Bean
-    public WorkFlow registerWorkflow(){
-        WorkflowStep action1 = new CreateUserStep();
-        WorkflowStep action2 = new SendMailStep();
+    public StandardWorkFlow registerWorkflow() {
+        WorkflowStep step1 = new CreateUserStep();
+        WorkflowStep step2 = new SendMailStep();
 
-        return new WorkFlow("Register Flow", Arrays.asList(action1, action2));
+        return new StandardWorkFlow("Register Flow", Arrays.asList(step1, step2));
     }
 }

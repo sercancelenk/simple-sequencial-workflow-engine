@@ -22,19 +22,19 @@ import java.util.function.Function;
 @Log4j2
 @Getter
 abstract class WorkflowImpl implements IWorkflow {
-    protected final List<WorkflowStep> actions;
+    protected final List<WorkflowStep> steps;
     protected final String workFlowName;
 
-    public WorkflowImpl(String workFlowName, List<WorkflowStep> actions) {
-        this.actions = actions;
+    public WorkflowImpl(String workFlowName, List<WorkflowStep> steps) {
+        this.steps = steps;
         this.workFlowName = workFlowName;
     }
 
     @Override
     public CompletableFuture<Boolean> processWorkflowFuture(AbstractContext context) {
-        List<WorkflowStep> actions = getWorkflowActions();
+        List<WorkflowStep> steps = getWorkflowSteps();
         log.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
-        return actions.stream()
+        return steps.stream()
                 .reduce(CompletableFuture.completedFuture(true),
                         (f, method) -> f.thenApplyAsync(result -> {
                             try {
@@ -70,12 +70,12 @@ abstract class WorkflowImpl implements IWorkflow {
 
     @Override
     public Mono<Boolean> processWorkflow(AbstractContext context) {
-        List<WorkflowStep> actions = getWorkflowActions();
+        List<WorkflowStep> steps = getWorkflowSteps();
         log.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
         log.info("[{}] Steps", getWorkFlowName());
-        actions.stream().forEach(action -> log.info("- {}", action.getName()));
+        steps.stream().forEach(action -> log.info("- {}", action.getName()));
         log.info("----------------------------------------------------");
-        return actions.stream()
+        return steps.stream()
                 .reduce(Mono.just(true),
                         (f, method) -> f.flatMap(result -> {
                             if (result) {
@@ -102,13 +102,13 @@ abstract class WorkflowImpl implements IWorkflow {
                 });
     }
 
-    private List<WorkflowStep> getWorkflowActions() {
-        List<WorkflowStep> actions = getActions();
-        if (CollectionUtils.isEmpty(actions)) {
-            log.error("There is no defined action for " + getWorkFlowName());
-            throw new IllegalArgumentException("There is no defined action for " + getWorkFlowName());
+    private List<WorkflowStep> getWorkflowSteps() {
+        List<WorkflowStep> steps = getSteps();
+        if (CollectionUtils.isEmpty(steps)) {
+            log.error("There is no defined step for " + getWorkFlowName());
+            throw new IllegalArgumentException("There is no defined step for " + getWorkFlowName());
         }
-        return actions;
+        return steps;
     }
 
 
