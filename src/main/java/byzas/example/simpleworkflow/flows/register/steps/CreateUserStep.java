@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
  */
 
 @Log4j2
-public class CreateUserStep implements WorkflowStep {
+public class CreateUserStep extends WorkflowStep {
     @Override
     public String getName() {
         return "Create User Step";

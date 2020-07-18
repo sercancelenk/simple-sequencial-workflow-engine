@@ -11,8 +11,15 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface WorkflowStep {
-    String getName();
+public abstract class WorkflowStep {
+    public abstract String getName();
 
-    Mono<Boolean> doAction(AbstractContext context);
+    public Mono<Boolean> doAction(AbstractContext context){
+        //Not implemented
+        return Mono.just(false);
+    }
+    public CompletableFuture<Boolean> doActionFuture(AbstractContext context){
+        // Not implemented
+        return CompletableFuture.completedFuture(false);
+    }
 }

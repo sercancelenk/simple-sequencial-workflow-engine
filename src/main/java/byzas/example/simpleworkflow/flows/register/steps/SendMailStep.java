@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture;
  * @project IntelliJ IDEA
  */
 @Log4j2
-public class SendMailStep implements WorkflowStep {
+public class SendMailStep extends WorkflowStep {
 
     @Override
     public String getName() {
