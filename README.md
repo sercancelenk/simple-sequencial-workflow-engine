@@ -1,4 +1,4 @@
-**Simple Workflow Engine in Java**
+**Simple Sequencial Workflow Engine in Java**
 
 **Features**
 - This library is written for managing sequencial flow steps for your own business.
