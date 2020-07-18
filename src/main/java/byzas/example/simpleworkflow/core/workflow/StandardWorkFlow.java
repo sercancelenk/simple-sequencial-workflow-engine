@@ -13,4 +13,8 @@ public class StandardWorkFlow extends WorkflowImpl {
     public StandardWorkFlow(String workFlowName, List<WorkflowStep> steps) {
         super(workFlowName, steps);
     }
+
+    public StandardWorkFlow(String workFlowName, List<WorkflowStep> steps, boolean disableLogging) {
+        super(workFlowName, steps, disableLogging);
+    }
 }

@@ -2,6 +2,7 @@ package byzas.example.simpleworkflow.core.workflow;
 
 import byzas.example.simpleworkflow.core.context.AbstractContext;
 import byzas.example.simpleworkflow.core.exception.WorkflowException;
+import byzas.example.simpleworkflow.core.util.LogUtil;
 import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -19,49 +20,57 @@ import java.util.function.Function;
  * @project IntelliJ IDEA
  */
 
-@Log4j2
 @Getter
 abstract class WorkflowImpl implements IWorkflow {
+    protected LogUtil logUtil;
     protected final List<WorkflowStep> steps;
     protected final String workFlowName;
+    protected boolean disableLogging = false;
 
     public WorkflowImpl(String workFlowName, List<WorkflowStep> steps) {
         this.steps = steps;
         this.workFlowName = workFlowName;
+        this.logUtil = new LogUtil(disableLogging);
+    }
+
+    public WorkflowImpl(String workFlowName, List<WorkflowStep> steps, boolean disableLogging) {
+        this.steps = steps;
+        this.workFlowName = workFlowName;
+        this.disableLogging = disableLogging;
+        this.logUtil = new LogUtil(disableLogging);
     }
 
     @Override
     public CompletableFuture<Boolean> processWorkflowFuture(AbstractContext context) {
         List<WorkflowStep> steps = getWorkflowSteps();
-        log.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
+        logUtil.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
+        logUtil.info("[{}] Steps", getWorkFlowName());
+        steps.stream().forEach(action -> logUtil.info("- {}", action.getName()));
         return steps.stream()
                 .reduce(CompletableFuture.completedFuture(true),
-                        (f, method) -> f.thenApplyAsync(result -> {
-                            try {
-                                return result && method.doActionFuture(context)
+                        (f, method) -> f.thenComposeAsync(result -> {
+                            if(result){
+                                return method.doActionFuture(context)
                                         .handle((r, t) -> {
                                             if (Optional.ofNullable(t).isPresent()) {
-                                                log.info("[WORKFLOW-STEP] [{}] completed exceptionally.", method.getName());
-                                                CompletableFuture<Boolean> rr = CompletableFuture.completedFuture(false);
+                                                logUtil.info("[WORKFLOW-STEP] [{}] completed exceptionally.", method.getName());
+                                                CompletableFuture<Boolean> rr = new CompletableFuture<>();
                                                 rr.completeExceptionally(new RuntimeException(t));
                                                 return rr;
                                             }
-                                            log.info("[WORKFLOW-STEP] [{}] completed successfully.", method.getName());
+                                            logUtil.info("[WORKFLOW-STEP] [{}] completed successfully.", method.getName());
                                             return CompletableFuture.completedFuture(r);
                                         })
-                                        .thenComposeAsync(Function.identity())
-                                        .join();
-                            } catch (Exception e) {
-                                log.error("[WORKFLOW-ERROR] [{}] - [{}]", this.getWorkFlowName(), method.getName(), e);
-                                throw new WorkflowException(e);
+                                        .thenComposeAsync(Function.identity());
                             }
+                            return CompletableFuture.completedFuture(false);
                         }),
                         (f1, f2) -> f1.thenCombine(f2, (result1, result2) -> result1 && result2))
                 .handle((r, ex) -> {
-                    if (ex instanceof CompletionException) {
-                        log.info("[WORKFLOW] [{}] completed exceptionally.", getWorkFlowName());
+                    if (ex instanceof CompletionException || ex instanceof RuntimeException) {
+                        logUtil.error("[WORKFLOW] [{}] completed exceptionally.", ex, getWorkFlowName());
                     } else {
-                        log.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
+                        logUtil.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
                     }
 
                     return r;
@@ -69,24 +78,24 @@ abstract class WorkflowImpl implements IWorkflow {
     }
 
     @Override
-    public Mono<Boolean> processWorkflow(AbstractContext context) {
+    public Mono<Boolean> processWorkflowMono(AbstractContext context) {
         List<WorkflowStep> steps = getWorkflowSteps();
-        log.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
-        log.info("[{}] Steps", getWorkFlowName());
-        steps.stream().forEach(action -> log.info("- {}", action.getName()));
-        log.info("----------------------------------------------------");
+        logUtil.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
+        logUtil.info("[{}] Steps", getWorkFlowName());
+        steps.stream().forEach(action -> logUtil.info("- {}", action.getName()));
+        logUtil.info("----------------------------------------------------");
         return steps.stream()
                 .reduce(Mono.just(true),
                         (f, method) -> f.flatMap(result -> {
                             if (result) {
-                                log.info("[WORKFLOW-STEP] [{}] started.", method.getName());
-                                return method.doAction(context)
+                                logUtil.info("[WORKFLOW-STEP] [{}] started.", method.getName());
+                                return method.doActionMono(context)
                                         .onErrorResume(t -> {
-                                            log.info("[WORKFLOW-STEP] [{}] completed exceptionally.", method.getName());
-                                            return Mono.error(new RuntimeException(t));
+                                            logUtil.info("[WORKFLOW-STEP] [{}] completed exceptionally.", method.getName());
+                                            return Mono.error(new WorkflowException(t));
                                         })
                                         .doOnSuccess(d -> {
-                                            log.info("[WORKFLOW-STEP] [{}] completed successfully.", method.getName());
+                                            logUtil.info("[WORKFLOW-STEP] [{}] completed successfully.", method.getName());
                                         });
 
                             } else {
@@ -95,17 +104,53 @@ abstract class WorkflowImpl implements IWorkflow {
                         }),
                         (f1, f2) -> f1.zipWith(f2, (result1, result2) -> result1 && result2))
                 .doOnError(t -> {
-                    log.error("[WORKFLOW] [{}] completed exceptionally.", getWorkFlowName(), t.getCause());
+                    logUtil.error("[WORKFLOW] [{}] completed exceptionally.", t.getCause(), getWorkFlowName());
                 })
                 .doOnSuccess(d -> {
-                    log.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
+                    logUtil.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
                 });
+    }
+
+    @Override
+    public Boolean processWorkflow(AbstractContext context) {
+        List<WorkflowStep> steps = getWorkflowSteps();
+        logUtil.info("[WORKFLOW] [{}] Started.", getWorkFlowName());
+        logUtil.info("[{}] Steps", getWorkFlowName());
+        steps.stream().forEach(action -> logUtil.info("- {}", action.getName()));
+        logUtil.info("----------------------------------------------------");
+
+        try {
+            boolean endResult = steps.stream()
+                    .reduce(true,
+                            (acc, step) -> {
+                                if (acc) {
+                                    try {
+                                        logUtil.info("[WORKFLOW-STEP] [{}] started.", step.getName());
+                                        boolean stepResult = step.doAction(context);
+                                        logUtil.info("[WORKFLOW-STEP] [{}] completed successfully.", step.getName());
+                                        return stepResult;
+                                    } catch (Exception e) {
+                                        logUtil.info("[WORKFLOW-STEP] [{}] completed exceptionally.", step.getName());
+                                        throw new WorkflowException(e);
+                                    }
+                                }
+                                return false;
+                            },
+                            (f1, f2) -> f1 && f2);
+
+            if(endResult) logUtil.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
+
+            return endResult;
+        }catch (Exception e){
+            logUtil.error("[WORKFLOW] [{}] completed exceptionally.", e, getWorkFlowName());
+            return false;
+        }
     }
 
     private List<WorkflowStep> getWorkflowSteps() {
         List<WorkflowStep> steps = getSteps();
         if (CollectionUtils.isEmpty(steps)) {
-            log.error("There is no defined step for " + getWorkFlowName());
+            logUtil.error("There is no defined step for " + getWorkFlowName());
             throw new IllegalArgumentException("There is no defined step for " + getWorkFlowName());
         }
         return steps;

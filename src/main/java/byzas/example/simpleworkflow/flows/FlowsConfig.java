@@ -21,6 +21,6 @@ public class FlowsConfig {
         WorkflowStep step1 = new CreateUserStep();
         WorkflowStep step2 = new SendMailStep();
 
-        return new StandardWorkFlow("Register Flow", Arrays.asList(step1, step2));
+        return new StandardWorkFlow("Register Flow", Arrays.asList(step1, step2), true);
     }
 }

@@ -10,7 +10,8 @@ import java.util.concurrent.CompletableFuture;
  * @project IntelliJ IDEA
  */
 public interface IWorkflow {
-    Mono<Boolean> processWorkflow(AbstractContext context);
+    Boolean processWorkflow(AbstractContext context);
+    Mono<Boolean> processWorkflowMono(AbstractContext context);
     CompletableFuture<Boolean> processWorkflowFuture(AbstractContext context);
 }
 

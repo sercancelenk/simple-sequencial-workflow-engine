@@ -28,5 +28,11 @@
     - CompletableFuture version
     AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("parameter1", "parameter1 value");}}));
     registerWorkflow.processWorkflowFuture(context).join();
+
+    - Blocking version
+    AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("parameter1", "parameter1 value");}}));
+    registerWorkflow.processWorkflow(context);
+    
+        
 ```
 

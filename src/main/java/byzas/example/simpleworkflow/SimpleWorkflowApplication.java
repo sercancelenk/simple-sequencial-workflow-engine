@@ -13,17 +13,8 @@ import java.util.Optional;
 
 @SpringBootApplication
 @RequiredArgsConstructor
-public class SimpleWorkflowApplication implements CommandLineRunner {
-
+public class SimpleWorkflowApplication {
     public static void main(String[] args) {
         SpringApplication.run(SimpleWorkflowApplication.class, args);
-    }
-
-    private final StandardWorkFlow registerWorkflow;
-
-    @Override
-    public void run(String... args) throws Exception {
-        AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>(){{put("sercan", "celenk");}}));
-        registerWorkflow.processWorkflow(context).subscribe();
     }
 }
