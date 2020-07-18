@@ -19,7 +19,7 @@ public class LogUtil {
     }
 
     public void info(String msg, Object... params) {
-        if(!disableLogging)
+        if (!disableLogging)
             log.info(format(msg, params));
     }
 

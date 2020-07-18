@@ -11,7 +11,9 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface IWorkflow {
     Boolean processWorkflow(AbstractContext context);
+
     Mono<Boolean> processWorkflowMono(AbstractContext context);
+
     CompletableFuture<Boolean> processWorkflowFuture(AbstractContext context);
 }
 

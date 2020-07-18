@@ -5,7 +5,6 @@ import byzas.example.simpleworkflow.core.exception.WorkflowException;
 import byzas.example.simpleworkflow.core.util.LogUtil;
 import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
 import lombok.Getter;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 
@@ -22,9 +21,9 @@ import java.util.function.Function;
 
 @Getter
 abstract class WorkflowImpl implements IWorkflow {
-    protected LogUtil logUtil;
     protected final List<WorkflowStep> steps;
     protected final String workFlowName;
+    protected LogUtil logUtil;
     protected boolean disableLogging = false;
 
     public WorkflowImpl(String workFlowName, List<WorkflowStep> steps) {
@@ -49,7 +48,7 @@ abstract class WorkflowImpl implements IWorkflow {
         return steps.stream()
                 .reduce(CompletableFuture.completedFuture(true),
                         (f, method) -> f.thenComposeAsync(result -> {
-                            if(result){
+                            if (result) {
                                 return method.doActionFuture(context)
                                         .handle((r, t) -> {
                                             if (Optional.ofNullable(t).isPresent()) {
@@ -138,10 +137,10 @@ abstract class WorkflowImpl implements IWorkflow {
                             },
                             (f1, f2) -> f1 && f2);
 
-            if(endResult) logUtil.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
+            if (endResult) logUtil.info("[WORKFLOW] [{}] completed successfully.", getWorkFlowName());
 
             return endResult;
-        }catch (Exception e){
+        } catch (Exception e) {
             logUtil.error("[WORKFLOW] [{}] completed exceptionally.", e, getWorkFlowName());
             return false;
         }

@@ -13,7 +13,7 @@ import java.util.Map;
 @Log4j2
 public abstract class AbstractContext {
     private final Map<String, Object> contextParameters;
-    private Map<String, Object> loggingContextParameters;
+    private final Map<String, Object> loggingContextParameters;
 
     protected AbstractContext(Map<String, Object> parameters) {
         this.contextParameters = parameters;
@@ -37,11 +37,11 @@ public abstract class AbstractContext {
         this.contextParameters.put(name, value);
     }
 
-    public void dumpLogs(){
+    public void dumpLogs() {
         log.info("{}", this.loggingContextParameters);
     }
 
-    public void dumpContextParameters(){
+    public void dumpContextParameters() {
         log.info("{}", this.contextParameters);
     }
 }

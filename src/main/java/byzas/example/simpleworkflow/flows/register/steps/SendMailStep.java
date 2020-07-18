@@ -6,7 +6,6 @@ import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
 
 /**
  * @author ext0280263 on 18.07.2020
