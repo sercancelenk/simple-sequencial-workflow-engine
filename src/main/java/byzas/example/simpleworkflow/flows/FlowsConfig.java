@@ -1,9 +1,9 @@
 package byzas.example.simpleworkflow.flows;
 
-import byzas.example.simpleworkflow.core.workflow.StandardWorkFlow;
-import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
 import byzas.example.simpleworkflow.flows.register.steps.CreateUserStep;
 import byzas.example.simpleworkflow.flows.register.steps.SendMailStep;
+import byzas.libs.workflow.engine.handler.StandardWorkflow;
+import byzas.libs.workflow.engine.handler.Step;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,10 +17,10 @@ import java.util.Arrays;
 @Configuration
 public class FlowsConfig {
     @Bean
-    public StandardWorkFlow registerWorkflow() {
-        WorkflowStep step1 = new CreateUserStep();
-        WorkflowStep step2 = new SendMailStep();
+    public StandardWorkflow registerWorkflow() {
+        Step step1 = new CreateUserStep();
+        Step step2 = new SendMailStep();
 
-        return new StandardWorkFlow("Register Flow", Arrays.asList(step1, step2), true);
+        return new StandardWorkflow("Register Flow", Arrays.asList(step1, step2), true);
     }
 }

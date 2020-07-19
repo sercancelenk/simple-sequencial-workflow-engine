@@ -1,7 +1,7 @@
 package byzas.example.simpleworkflow.flows.register.steps;
 
-import byzas.example.simpleworkflow.core.context.AbstractContext;
-import byzas.example.simpleworkflow.core.workflowstep.WorkflowStep;
+import byzas.libs.workflow.engine.handler.Context;
+import byzas.libs.workflow.engine.handler.Step;
 import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
  */
 
 @Log4j2
-public class SendMailStep extends WorkflowStep {
+public class SendMailStep implements Step {
 
     @Override
     public String getName() {
@@ -22,7 +22,7 @@ public class SendMailStep extends WorkflowStep {
 
 
     @Override
-    public CompletableFuture<Boolean> doActionFuture(AbstractContext context) {
+    public CompletableFuture<Boolean> doActionFuture(Context context) {
         log.info("Mail sended");
         log.info("Incoming parameter : parameter1 : " + context.getParametersAttribute("parameter1"));
         context.setParametersAttribute("mail", "sended");
@@ -31,7 +31,7 @@ public class SendMailStep extends WorkflowStep {
     }
 
     @Override
-    public Mono<Boolean> doActionMono(AbstractContext context) {
+    public Mono<Boolean> doActionMono(Context context) {
         log.info("Mail sended");
         log.info("Incoming parameter : parameter1 : " + context.getParametersAttribute("parameter1"));
         context.setParametersAttribute("mail", "sended");
@@ -40,7 +40,7 @@ public class SendMailStep extends WorkflowStep {
     }
 
     @Override
-    public Boolean doAction(AbstractContext context) {
+    public Boolean doAction(Context context) {
         log.info("Mail sended");
         log.info("Incoming parameter : parameter1 : " + context.getParametersAttribute("parameter1"));
         context.setParametersAttribute("mail", "sended");

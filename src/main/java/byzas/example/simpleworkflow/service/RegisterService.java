@@ -1,13 +1,12 @@
 package byzas.example.simpleworkflow.service;
 
-import byzas.example.simpleworkflow.core.context.AbstractContext;
-import byzas.example.simpleworkflow.core.context.ParameterContext;
-import byzas.example.simpleworkflow.core.workflow.StandardWorkFlow;
+import byzas.libs.workflow.engine.handler.Context;
+import byzas.libs.workflow.engine.handler.ParameterContext;
+import byzas.libs.workflow.engine.handler.StandardWorkflow;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.Map;
 
 /**
  * @author ext0280263 on 18.07.2020
@@ -16,26 +15,20 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class RegisterService {
-    private final StandardWorkFlow registerWorkflow;
+    private final StandardWorkflow registerWorkflow;
 
     public void registerUser() {
-        AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>() {{
-            put("sercan", "celenk");
-        }}));
+        Context context = new ParameterContext(Map.of("sercan", "celenk"));
         registerWorkflow.processWorkflow(context);
     }
 
     public void registerUserMono() {
-        AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>() {{
-            put("sercan", "celenk");
-        }}));
+        Context context = new ParameterContext(Map.of("sercan", "celenk"));
         registerWorkflow.processWorkflowMono(context).subscribe();
     }
 
     public void registerUserFuture() {
-        AbstractContext context = new ParameterContext(Optional.of(new HashMap<String, Object>() {{
-            put("sercan", "celenk");
-        }}));
+        Context context = new ParameterContext(Map.of("sercan", "celenk"));
         registerWorkflow.processWorkflowFuture(context);
     }
 }
